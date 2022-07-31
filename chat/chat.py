@@ -1,14 +1,13 @@
-from lib2to3.pgen2 import token
 import random
 import json
-from regex import D
 import torch
 from model import NeuralNet
-from nltk_utils import bag_of_words, tokenize
+from konltk_utils import bag_of_words, tokenize
 
 device = torch.device("cuda" if torch.cuda.is_available else "cpu")
+device = "cpu"
 
-with open('intents.json', 'r') as f:
+with open('kointents.json', 'r') as f:
     intents = json.load(f)
 
 FILE = "data.pth"
@@ -42,13 +41,13 @@ while True:
     output = model(X)
     _, predicted = torch.max(output, dim=1)
     tag = tags[predicted.item()]
-    
+
     probs = torch.softmax(output, dim=1)
     prob = probs[0][predicted.item()]
 
-    if prob.item() > 0.75:
+    if prob.item() > 0.5:
         for intent in intents["intents"]:
             if tag == intent["tag"]:
                 print(f"{bot_name}: {random.choice(intent['response'])}")
     else:
-        print(f'{bot_name}: I do not understand...')            
+        print(f'{bot_name}: I do not understand...')

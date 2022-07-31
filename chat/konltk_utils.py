@@ -1,8 +1,7 @@
+from konlpy.tag import Hannanum
 import numpy as np
-import nltk
-from nltk.stem.porter import PorterStemmer
-# nltk.download('punkt')
-stemmer = PorterStemmer()
+
+hannanum = Hannanum()
 
 
 def tokenize(sentence):
@@ -10,18 +9,19 @@ def tokenize(sentence):
     split sentence into array of words/tokens
     a token can be a word or punctuation character, or number
     """
-    return nltk.word_tokenize(sentence)
+    sentence = sentence.replace(".", "")
+    return hannanum.morphs(sentence)
 
 
-def stem(word):
-    """
-    stemming = find the root form of the word
-    examples:
-    words = ["organize", "organizes", "organizing"]
-    words = [stem(w) for w in words]
-    -> ["organ", "organ", "organ"]
-    """
-    return stemmer.stem(word.lower())
+# def stem(word):
+#     """
+#     stemming = find the root form of the word
+#     examples:
+#     words = ["organize", "organizes", "organizing"]
+#     words = [stem(w) for w in words]
+#     -> ["organ", "organ", "organ"]
+#     """
+#     pass
 
 
 def bag_of_words(tokenized_sentence, all_words):
@@ -33,8 +33,6 @@ def bag_of_words(tokenized_sentence, all_words):
     words = ["hi", "hello", "I", "you", "bye", "thank", "cool"]
     bog   = [  0 ,    1 ,    0 ,   1 ,    0 ,    0 ,      0]
     """
-    tokenized_sentence = [stem(w) for w in tokenized_sentence]
-
     bag = np.zeros(len(all_words), dtype=np.float32)
     for idx, w in enumerate(all_words):
         if w in tokenized_sentence:
@@ -44,9 +42,7 @@ def bag_of_words(tokenized_sentence, all_words):
 
 
 if __name__ == "__main__":
-    a = "How long does shipping take?"
+    a = "롯데마트의 흑마늘 양념 치킨이 논란이 되고 있다."
     print(a)
     a = tokenize(a)
-    print(a)
-    stemmed_words = [stem(w) for w in a]
-    print(stemmed_words)
+

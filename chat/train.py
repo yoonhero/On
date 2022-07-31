@@ -1,13 +1,13 @@
 import json
 from model import NeuralNet
-from nltk_utils import tokenize, stem, bag_of_words
+from konltk_utils import tokenize, bag_of_words
 import numpy as np
 
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
-with open('intents.json', 'r') as f:
+with open('kointents.json', 'r') as f:
     intents = json.load(f)
 
 
@@ -19,12 +19,12 @@ for intent in intents['intents']:
     tag = intent["tag"]
     tags.append(tag)
     for pattern in intent["patterns"]:
-        w = tokenize(pattern)       
-        all_words.extend(w)    
+        w = tokenize(pattern)
+        all_words.extend(w)
         xy.append((w, tag))
-    
+
 ignore_words = ["?", "!", ",", "."]
-all_words = [stem(w) for w in all_words if w not in ignore_words]
+all_words = [w for w in all_words if w not in ignore_words]
 all_words = sorted(set(all_words))
 tags = sorted(set(tags))
 # print(all_words, tags)
@@ -36,10 +36,11 @@ for (pattern_sentence, tag) in xy:
     X_train.append(bag)
 
     label = tags.index(tag)
-    y_train.append(label) # CrossEntropyLoss
+    y_train.append(label)  # CrossEntropyLoss
 
 X_train = np.array(X_train)
 y_train = np.array(y_train)
+
 
 class ChatDataset(Dataset):
     def __init__(self):
@@ -47,13 +48,14 @@ class ChatDataset(Dataset):
         self.x_data = X_train
         self.y_data = y_train
 
-    #dataset[idx]
+    # dataset[idx]
     def __getitem__(self, idx):
         return self.x_data[idx], self.y_data[idx]
-    
+
     def __len__(self):
         return self.n_samples
-    
+
+
 # Hyperparameters
 batch_size = 8
 hidden_size = 8
@@ -66,10 +68,12 @@ num_epochs = 1000
 
 
 dataset = ChatDataset()
-train_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+train_loader = DataLoader(
+    dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 
 device = torch.device("cuda" if torch.cuda.is_available else "cpu")
+device = "cpu"
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
 
 # loss and optimizer
@@ -96,14 +100,13 @@ for epoch in range(num_epochs):
 print(f'final loss={loss.item():.4f}')
 
 
-
 data = {
-"model_state": model.state_dict(),
-"input_size": input_size,
-"hidden_size": hidden_size,
-"output_size": output_size,
-"all_words": all_words,
-"tags": tags
+    "model_state": model.state_dict(),
+    "input_size": input_size,
+    "hidden_size": hidden_size,
+    "output_size": output_size,
+    "all_words": all_words,
+    "tags": tags
 }
 
 FILE = "data.pth"
