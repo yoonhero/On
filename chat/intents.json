@@ -1,0 +1,23 @@
+{
+    "intents" : [
+      {
+        "tag":  "greetings",
+        "patterns": ["hello", "hey", "hi", "good day", "greetings", "what's up?", "how is it going?"],
+        "response": ["Hello!", "Hey!", "What can I do for you?"]
+      },
+      {
+        "tag":  "goodbye",
+        "patterns": ["cya", "See you later", "GoodBye", "I am Leaving", "Have a Good day", "bye", "cao", "see ya"],
+        "response": ["Sad to see you go :(", "Talk to you later", "Goodbye!", "See you Later!"]
+      },
+      {
+        "tag":  "age",
+        "patterns": ["how old", "how old is florian", "what is your age", "how old are you", "age?"],
+        "response": ["My age is Undefined", "My age is 1hour z.z"]
+      },{
+        "tag":  "name",
+        "patterns": ["what is your name?", "what should I call you", "whats your name", "who are you?", "Can you tell me your name?"],
+        "response": ["You can call me -chae-", "I'm -chae-", "bro"]
+      }
+    ]
+  }
