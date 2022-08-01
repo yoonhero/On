@@ -1,11 +1,12 @@
 import json
+from os import times
 import torch
 import openpyxl
 import time
+import datetime
+
 
 # Load Json File
-
-
 def load_json(filename: str) -> dict:
     with open(filename, "r") as f:
         return json.load(f)
@@ -44,6 +45,22 @@ class TimeLogger:
 
     def __call__(self, *args, **kwargs):
         return self._logger(*args, **kwargs)
+
+
+# Logging Running Function
+def LoggingResult(func):
+    import logging
+    filename = '{}.log'.format(func.__name__)
+    logging.basicConfig(handlers=[logging.FileHandler(
+        filename, 'a', 'utf-8')], level=logging.INFO)
+
+    def wrapper(*args, **kwargs):
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        logging.info(
+            '[{}] Running Result args - {}, kwargs - {}'.format(timestamp, args, kwargs))
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 if __name__ == '__main__':
