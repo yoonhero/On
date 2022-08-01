@@ -1,11 +1,12 @@
 import json
 from model import NeuralNet
-from konltk_utils import tokenize, bag_of_words
+from konltk_utils import tokenize, bag_of_words, ignore_words
 import numpy as np
 
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
+from ddataset import ChatDataset
 
 with open('kointents.json', 'r') as f:
     intents = json.load(f)
@@ -23,11 +24,12 @@ for intent in intents['intents']:
         all_words.extend(w)
         xy.append((w, tag))
 
-ignore_words = ["?", "!", ",", "."]
-all_words = [w for w in all_words if w not in ignore_words]
+
+all_words = ignore_words(all_words)
 all_words = sorted(set(all_words))
 tags = sorted(set(tags))
 # print(all_words, tags)
+
 
 X_train = []
 y_train = []
@@ -42,20 +44,6 @@ X_train = np.array(X_train)
 y_train = np.array(y_train)
 
 
-class ChatDataset(Dataset):
-    def __init__(self):
-        self.n_samples = len(X_train)
-        self.x_data = X_train
-        self.y_data = y_train
-
-    # dataset[idx]
-    def __getitem__(self, idx):
-        return self.x_data[idx], self.y_data[idx]
-
-    def __len__(self):
-        return self.n_samples
-
-
 # Hyperparameters
 batch_size = 8
 hidden_size = 8
@@ -67,7 +55,7 @@ num_epochs = 1000
 # print(output_size, tags)
 
 
-dataset = ChatDataset()
+dataset = ChatDataset(X_train, y_train)
 train_loader = DataLoader(
     dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
@@ -109,7 +97,7 @@ data = {
     "tags": tags
 }
 
-FILE = "data.pth"
+FILE = "model2.pth"
 torch.save(data, FILE)
 
 print(f'training complete. file saved to {FILE}')

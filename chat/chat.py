@@ -10,7 +10,7 @@ device = "cpu"
 with open('kointents.json', 'r') as f:
     intents = json.load(f)
 
-FILE = "data.pth"
+FILE = "model2.pth"
 data = torch.load(FILE)
 
 input_size = data["input_size"]

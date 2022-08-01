@@ -1,7 +1,20 @@
 from konlpy.tag import Hannanum
+from konlpy.tag import Okt
 import numpy as np
 
 hannanum = Hannanum()
+okt = Okt()
+# print(hannanum.morphs("사랑햌ㅋㅋ"))
+
+
+def ignore_words(words):
+    ignore_patterns = ["?", "!", ",", "."]
+    clean_words = [normalize(w) for w in words if w not in ignore_patterns]
+    return clean_words
+
+
+def normalize(sentence):
+    return okt.normalize(sentence)
 
 
 def tokenize(sentence):
@@ -9,19 +22,7 @@ def tokenize(sentence):
     split sentence into array of words/tokens
     a token can be a word or punctuation character, or number
     """
-    sentence = sentence.replace(".", "")
     return hannanum.morphs(sentence)
-
-
-# def stem(word):
-#     """
-#     stemming = find the root form of the word
-#     examples:
-#     words = ["organize", "organizes", "organizing"]
-#     words = [stem(w) for w in words]
-#     -> ["organ", "organ", "organ"]
-#     """
-#     pass
 
 
 def bag_of_words(tokenized_sentence, all_words):
@@ -42,7 +43,9 @@ def bag_of_words(tokenized_sentence, all_words):
 
 
 if __name__ == "__main__":
-    a = "롯데마트의 흑마늘 양념 치킨이 논란이 되고 있다."
+    a = "사랑햌ㅋㅋ"
     print(a)
     a = tokenize(a)
-
+    print(a)
+    a = normalize(a[0])
+    print(a)
