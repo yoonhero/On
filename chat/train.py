@@ -1,16 +1,15 @@
-import json
+from chat.utils import get_device, load_json
 from model import NeuralNet
 from konltk_utils import tokenize, bag_of_words, ignore_words
 import numpy as np
-
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 from ddataset import ChatDataset
+from pyconstantt import constant
 
-with open('kointents.json', 'r') as f:
-    intents = json.load(f)
-
+constant.FileName = "kointents.json"
+intents = load_json(constant.FileName)
 
 all_words = []
 tags = []
@@ -60,8 +59,7 @@ train_loader = DataLoader(
     dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 
-device = torch.device("cuda" if torch.cuda.is_available else "cpu")
-device = "cpu"
+device = get_device(True)
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
 
 # loss and optimizer

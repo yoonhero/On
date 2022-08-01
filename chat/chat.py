@@ -1,14 +1,14 @@
+from chat.utils import get_device, load_json
 import random
-import json
 import torch
 from model import NeuralNet
 from konltk_utils import bag_of_words, tokenize
+from pyconstantt import constant
 
-device = torch.device("cuda" if torch.cuda.is_available else "cpu")
-device = "cpu"
+device = get_device(True)
 
-with open('kointents.json', 'r') as f:
-    intents = json.load(f)
+constant.FileName = "kointents.json"
+intents = load_json(constant.FileName)
 
 FILE = "model2.pth"
 data = torch.load(FILE)
