@@ -5,7 +5,7 @@ import time
 
 # Naver movie review
 def read_review_data(filename):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding="UTF8") as f:
         data = [line.split("\t") for line in f.read().splitlines()]
         data = data[1:]
     return data
@@ -34,7 +34,7 @@ def train_words2vec():
 
 
 if __name__ == "__main__":
-    # train_words2vec()
+    train_words2vec()
     # loading model
     model = Word2Vec.load('nvmc.model')
     print(f"corpus_total_words : ", model.corpus_total_words)
