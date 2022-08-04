@@ -1,10 +1,11 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-
+import keras 
+from keras.layers import Layer, Dense
 
 # Encoding Position Infomation to give a positional information
-class PositionalEncoding(tf.keras.layers.Layer):
+class PositionalEncoding(Layer):
     def __init__(self, position, d_model):
         super(PositionalEncoding, self).__init__()
         self.pos_encoding = self.positional_encoding(position, d_model)
@@ -82,6 +83,80 @@ def scaled_dot_product_attention(query, key, value, mask):
     output = tf.matmul(attention_weights, value)
 
     return output, attention_weights
+
+
+
+# MultiHeadAttention (Scaled Dot-Product Attention * num_heads)
+class MultiHeadAttention(Layer):
+    def __init__(self, d_model, num_heads, name="multi_head_attention"):
+        super(MultiHeadAttention, self).__init__(name=name)
+        self.num_heads = num_heads
+        self.d_model = d_model
+    
+        assert d_model % self.num_heads == 0
+
+
+        # d_model divide into num_heads
+        # Principle of Paper = 64
+        self.depth = d_model // self.num_heads
+
+        # WQ, WK, WV에 해당하는 밀집층 정의
+        self.query_dense = Dense(units=d_model)
+        self.key_dense = Dense(units=d_model)
+        self.value_dense = Dense(units=d_model)
+
+        # WO에 해당하는 밀집층 정의
+        self.dense = Dense(units=d_model)
+
+    
+    # num_heads 개수만큼 q, k, v를 split하는 함수
+    def split_heads(self, inputs, batch_size):
+        inputs = tf.reshape(
+            inputs, shape=(batch_size, -1, self.num_heads, self.depth)
+        )
+    
+        return tf.transpose(inputs, perm=[0, 2, 1, 3])
+    
+
+    def call(self, inputs):
+        query, key, value, mask = inputs['query'], inputs['key'], inputs['value'], inputs['mask']
+        batch_size = tf.shape(query)[0]
+
+        # 1. WQ, WK, WV에 해당하는 밀집층 지나기
+        # q : (batch_size, query의 문장 길이, d_model)
+        # k : (batch_size, key의 문장 길이, d_model)
+        # v : (batch_size, value의 문장 길이, d_model)
+        # 참고) 인코더(k, v)-디코더(q) 어텐션에서는 query 길이와 key, value의 길이는 다를 수 있다.
+        query = self.query_dense(query)
+        key = self.key_dense(key)
+        value = self.value_dense(value)
+
+        # 2. 헤드 나누기
+        # q : (batch_size, num_heads, query의 문장 길이, d_model/num_heads)
+        # k : (batch_size, num_heads, key의 문장 길이, d_model/num_heads)
+        # v : (batch_size, num_heads, value의 문장 길이, d_model/num_heads)
+        query = self.split_heads(query, batch_size)
+        key = self.split_heads(key, batch_size)
+        value = self.split_heads(value, batch_size)
+
+        # 3. Scaled Dot-Product Attention
+        # (batch_size, num_heads, query의 문장 길이, d_model/num_heads)
+        scaled_attention, _ = scaled_dot_product_attention(query, key, value, mask)
+        # (batch_size, query의 문장 길이, num_heads, d_model/num_heads)
+        scaled_attention = tf.transpose(scaled_attention, perm=[0, 2, 1, 3])
+
+        # 4. Connect Head (Concatenate)
+        # (batch_size, query의 문장 길이, d_model)
+        concat_attention = tf.reshape(scaled_attention, shape=(batch_size, -1, self.d_model))
+
+
+        # 5. WO에 해당하는 밀집층 지나기
+        # (batch_size, query의 문장 길이, d_model)
+        outputs = self.dense(concat_attention)
+
+
+        return outputs
+
 
 
 
