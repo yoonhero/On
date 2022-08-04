@@ -163,3 +163,7 @@ cython_debug/
 dataset/
 
 chat/nvmc.model
+
+chat/training_1
+
+chat/first_result
