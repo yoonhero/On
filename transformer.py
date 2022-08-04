@@ -352,6 +352,44 @@ def transformer(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="
 
 
 
+# Using CrossEntropy Function as Loss Function Becuase of multi-class classification problem
+def loss_function(y_true, y_pred, MAX_LENGTH):
+  y_true = tf.reshape(y_true, shape=(-1, MAX_LENGTH - 1))
+
+  loss = tf.keras.losses.SparseCategoricalCrossentropy(
+      from_logits=True, reduction='none')(y_true, y_pred)
+
+  mask = tf.cast(tf.not_equal(y_true, 0), tf.float32)
+  loss = tf.multiply(loss, mask)
+
+  return tf.reduce_mean(loss)
+
+
+
+# Calculate Learning Rate
+class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
+
+  def __init__(self, d_model, warmup_steps=4000):
+    super(CustomSchedule, self).__init__()
+    self.d_model = d_model
+    self.d_model = tf.cast(self.d_model, tf.float32)
+    self.warmup_steps = warmup_steps
+
+  def __call__(self, step):
+    arg1 = tf.math.rsqrt(step)
+    arg2 = step * (self.warmup_steps**-1.5)
+
+    return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
+  
+  def get_config(self):
+    config = {
+      'd_model': self.d_model,
+      'warmup_steps': self.warmup_steps,
+    }
+    
+    return config
+
+
 
 if __name__ == "__main__":
     # 문장의 길이 50, 임베딩 벡터의 차원 128
@@ -386,3 +424,23 @@ if __name__ == "__main__":
     print(create_padding_mask(tf.constant([[1, 21, 777, 0, 0]])))
 
     print(create_look_ahead_mask(tf.constant([[1, 2, 0, 4, 5]])))
+
+
+    small_transformer = transformer(
+    vocab_size = 9000,
+    num_layers = 4,
+    dff = 512,
+    d_model = 128,
+    num_heads = 4,
+    dropout = 0.3,
+    name="small_transformer")
+
+    tf.keras.utils.plot_model(
+    small_transformer, to_file='small_transformer.png', show_shapes=True)
+
+
+    sample_learning_rate = CustomSchedule(d_model=128)
+
+    plt.plot(sample_learning_rate(tf.range(200000, dtype=tf.float32)))
+    plt.ylabel("Learning Rate")
+    plt.xlabel("Train Step")
