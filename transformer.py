@@ -330,7 +330,7 @@ def transformer(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="
 
 
     # Encoder's Padding mask
-    enc_padding_mask = Lambda(create_look_ahead_mask, output_shape=(1, None, None), name="enc_padding_mask")(inputs)
+    enc_padding_mask = Lambda(create_padding_mask, output_shape=(1, 1, None), name="enc_padding_mask")(inputs)
 
     # Decoder's Look-ahead Mask
     look_ahead_mask = Lambda(create_look_ahead_mask, output_shape=(1, None, None), name="look_ahead_mask")(dec_inputs)
@@ -340,10 +340,10 @@ def transformer(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="
 
     
     # Encoder's Output enc_outputs. Transfer to Decoder
-    enc_outputs = encoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout)(inputs=[inputs, enc_padding_mask])
+    enc_outputs = encoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout, )(inputs=[inputs, enc_padding_mask])
 
     # Decoder's Output dec_outputs. Transfer to Final Layer
-    dec_outputs = decoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout)(inputs=[inputs, enc_outputs, look_ahead_mask, dec_padding_mask])
+    dec_outputs = decoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout, )(inputs=[dec_inputs, enc_outputs, look_ahead_mask, dec_padding_mask])
 
 
     # Final Layer to Predict Next Word

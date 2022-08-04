@@ -171,3 +171,6 @@ chat/first_result
 NIKL_OM_2021_v1.0/
 
 final_dataset.csv
+small_vocab.subwords
+super_small_vocab.subwords
+tokenizing.subwords

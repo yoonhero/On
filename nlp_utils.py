@@ -16,8 +16,10 @@ def preprocess_sentence( sentence):
 
 class TextTokenizing():
     def __init__(self, inputs, outputs, MAX_LENGTH=50):
+        self.inputs = inputs
+        self.outputs = outputs
+
         # 단어 집합을 생성
-    # return Tokenizer, START_TOKEN, END_TOKEN
         self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
             inputs+outputs, target_vocab_size=2**13
         )
