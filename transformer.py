@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import keras 
-from keras.layers import Layer, Dense, Dropout, LayerNormalization
+from keras.layers import Layer, Dense, Dropout, LayerNormalization, Embedding
 
 # Encoding Position Infomation to give a positional information
 class PositionalEncoding(Layer):
@@ -198,6 +198,25 @@ def encoder_layer(dff, d_model, num_heads, dropout, name='encoder_layer'):
     # Dropout + Residual Connection and Layer Normalizaion
     outputs = Dropout(rate=dropout)(outputs)
     outputs = LayerNormalization(epsilon=1e-6)(attention + outputs)
+
+    return keras.Model(inputs=[inputs, padding_mask], outputs=outputs, name=name)
+
+
+def encoder(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="encoder"):
+    inputs = keras.Input(shape=(None,), name="inputs")
+
+    # Encoder using Padding Mask
+    padding_mask = keras.Input(shape=(1, 1, None), name="padding_mask")
+
+    # Positional Encoding + Dropout
+    embeddings = Embedding(vocab_size, d_model)(inputs)
+    embeddings *= tf.math.sqrt(tf.cast(d_model, tf.float32))
+    embeddings = PositionalEncoding(vocab_size, d_model)(embeddings)
+    outputs = Dropout(rate=dropout)(embeddings)
+
+    # Encoder Stack as many as num_layers
+    for i in range(num_layers):
+        outputs = encoder_layer(dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout, name="encoder_layer_{}".format(i))([outputs, padding_mask])
 
     return keras.Model(inputs=[inputs, padding_mask], outputs=outputs, name=name)
 
