@@ -222,6 +222,105 @@ def encoder(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="enco
 
 
 
+
+# Decoder's First Sublayer Masking Future Token
+def create_look_ahead_mask(x):
+    seq_len = tf.shape(x)[1]
+    look_ahead_mask = 1 - tf.linalg.band_part(tf.ones((seq_len, seq_len)), -1, 0)
+    padding_mask = create_padding_mask(x) # Include Padding mask
+    return tf.maximum(look_ahead_mask, padding_mask)
+
+
+
+
+def decoder_layer(dff, d_model, num_heads, dropout, name="decoder_layer"):
+    inputs = keras.Input(shape=(None, d_model), name="inputs")
+    enc_outputs = keras.Input(shape=(None, d_model), name="encoder_outputs")
+
+    # Look Ahead Mask (First Layer)
+    look_ahead_mask = keras.Input(
+        shape=(1, None, None), name="look_ahead_mask"
+    )
+
+    # Padding Mask (Second Layer)
+    padding_mask = keras.Input(shape=(1, 1, None), name="padding_mask")
+
+
+    # Multi-Head Attention (First Sublayer / Masked Self Attention)
+    attention1 = MultiHeadAttention(
+        d_model, num_heads, name="attention1"
+    )(inputs={
+        'query': inputs, 'key': inputs, 'value': inputs, # Q = K = V
+        'mask': look_ahead_mask # Look ahead mask
+    })
+
+
+    # Residual Connection and Normalizaion
+    attention1 = LayerNormalization(epsilon=1e-6)(attention1+inputs)
+
+
+    # Multi-Head Attention (Second Sublayer / Decoder-Encoder Attention)
+    attention2 = MultiHeadAttention(
+        d_model, num_heads, name="attention2"
+    )(
+        inputs={
+            'query': attention1, 'key': enc_outputs, 'value': enc_outputs, # Q != K = V
+            'mask': padding_mask # Padding mask
+        }
+    )
+
+
+    # Dropout + Residual Connection and Layer Normalizaion
+    attention2 = Dropout(rate=dropout)(attention2)
+    attention2 = LayerNormalization(epsilon=1e-6)(attention2+attention1)
+
+
+    # Positional Wise FFNN (Third Sublayer)
+    outputs = Dense(units=dff, activation="relu")(attention2)
+    outputs = Dense(units=d_model)(outputs)
+
+    # Droptout + Residual Connection and LayerNormalization
+    outputs = Dropout(rate=dropout)(outputs)
+    outputs = LayerNormalization(epsilon=1e-6)(outputs+attention2)
+
+    return keras.Model(
+        inputs=[inputs, enc_outputs, look_ahead_mask, padding_mask],
+        outputs=outputs,
+        name=name
+    )
+
+
+
+def decoder(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="decoder"):
+    inputs = keras.Input(shape=(None, ), name="inputs")
+    enc_outputs = keras.Input(shape=(None, d_model), name="encoder_outputs")
+
+    # Decoder Using Both Look-Ahead Mask and Padding Mask 
+    look_ahead_mask = keras.Input(shape=(1, None, None), name="look_ahead_mask")
+    padding_mask = keras.Input(shape=(1, 1, None), name="padding_mask")
+
+
+    # Positional Encoding + Dropout
+    embeddings = tf.keras.layers.Embedding(vocab_size, d_model)(inputs)
+    embeddings *= tf.math.sqrt(tf.cast(d_model, tf.float32))
+    embeddings = PositionalEncoding(vocab_size, d_model)(embeddings)
+    outputs = Dropout(rate=dropout)(embeddings)
+
+
+    # Stak Decoder as many as num_layers
+    for i in range(num_layers):
+        outputs = decoder_layer(dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout, name="decoder_layer_{}".format(i))(inputs=[outputs, enc_outputs, look_ahead_mask, padding_mask])
+
+    return keras.Model(
+        inputs=[inputs, enc_outputs, look_ahead_mask, padding_mask],
+        outputs=outputs,
+        name=name
+    )
+
+
+
+
+
 if __name__ == "__main__":
     # 문장의 길이 50, 임베딩 벡터의 차원 128
     sample_pos_encoding = PositionalEncoding(50, 128)
@@ -253,3 +352,5 @@ if __name__ == "__main__":
     print(temp_out) # 어텐션 값 
 
     print(create_padding_mask(tf.constant([[1, 21, 777, 0, 0]])))
+
+    print(create_look_ahead_mask(tf.constant([[1, 2, 0, 4, 5]])))
