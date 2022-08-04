@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import keras 
-from keras.layers import Layer, Dense
+from keras.layers import Layer, Dense, Dropout, LayerNormalization
 
 # Encoding Position Infomation to give a positional information
 class PositionalEncoding(Layer):
@@ -166,6 +166,40 @@ def create_padding_mask(x):
 
     # (batch_size, 1, 1, key의 문장 길이)
     return mask[:, tf.newaxis, tf.newaxis, :]
+  
+
+
+def encoder_layer(dff, d_model, num_heads, dropout, name='encoder_layer'):
+    inputs = keras.Input(shape=(None, d_model), name="inputs")
+
+    # Encoder using PaddingMask
+    padding_mask = keras.Input(shape=(1, 1, None), name="padding_mask")
+
+
+    # Multi-Head Attention (First Sub Layer / Self Attention)
+    attention = MultiHeadAttention(
+        d_model, num_heads, name="attention"
+    )({
+        'query': inputs, 'key': inputs, 'value': inputs, # Q = K = V
+        'mask': padding_mask # Using Padding Mast
+    })
+
+
+    # Dropout + Residual Connection and Layer Normalizaion
+    attention = Dropout(rate=dropout)(attention)
+    attention = LayerNormalization(epsilon=1e-6)(inputs+attention)
+
+
+    # Positional Wise FFNN (Second Sublayer)
+    outputs = Dense(units=dff, activation="relu")(attention)
+    outputs = Dense(units=d_model)(outputs)
+
+
+    # Dropout + Residual Connection and Layer Normalizaion
+    outputs = Dropout(rate=dropout)(outputs)
+    outputs = LayerNormalization(epsilon=1e-6)(attention + outputs)
+
+    return keras.Model(inputs=[inputs, padding_mask], outputs=outputs, name=name)
 
 
 
