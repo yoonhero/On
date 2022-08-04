@@ -159,6 +159,15 @@ class MultiHeadAttention(Layer):
 
 
 
+# Create Padding Mask 
+# Integer Sequence => 0 else 1
+def create_padding_mask(x):
+    mask = tf.cast(tf.math.equal(x, 0), tf.float32)
+
+    # (batch_size, 1, 1, key의 문장 길이)
+    return mask[:, tf.newaxis, tf.newaxis, :]
+
+
 
 if __name__ == "__main__":
     # 문장의 길이 50, 임베딩 벡터의 차원 128
@@ -189,3 +198,5 @@ if __name__ == "__main__":
     temp_out, temp_attn = scaled_dot_product_attention(temp_q, temp_k, temp_v, None)
     print(temp_attn) # 어텐션 분포(어텐션 가중치의 나열)
     print(temp_out) # 어텐션 값 
+
+    print(create_padding_mask(tf.constant([[1, 21, 777, 0, 0]])))
