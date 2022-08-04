@@ -41,7 +41,7 @@ class TextTokenizing():
         
         # Padding
         tokenized_inputs = pad_sequences(tokenized_inputs, maxlen=self.MAX_LENGTH, padding="post")
-        tokenizer_output = pad_sequences(tokenized_outputs, maxlen=self.MAX_LENGTH, padding="post")
+        tokenized_outputs = pad_sequences(tokenized_outputs, maxlen=self.MAX_LENGTH, padding="post")
 
 
         return tokenized_inputs, tokenized_outputs
