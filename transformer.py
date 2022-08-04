@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import keras 
-from keras.layers import Layer, Dense, Dropout, LayerNormalization, Embedding
+from keras.layers import Layer, Dense, Dropout, LayerNormalization, Embedding, Lambda
 
 # Encoding Position Infomation to give a positional information
 class PositionalEncoding(Layer):
@@ -317,6 +317,38 @@ def decoder(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="deco
         name=name
     )
 
+
+
+def transformer(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="transformer"):
+    # Encoder's Input
+    inputs = keras.Input(shape=(None, ), name="inputs")
+
+
+    # Decoder's Input
+    dec_inputs = keras.Input(shape=(None, ), name="dec_inputs")
+
+
+    # Encoder's Padding mask
+    enc_padding_mask = Lambda(create_look_ahead_mask, output_shape=(1, None, None), name="enc_padding_mask")(inputs)
+
+    # Decoder's Look-ahead Mask
+    look_ahead_mask = Lambda(create_look_ahead_mask, output_shape=(1, None, None), name="look_ahead_mask")(dec_inputs)
+
+    # Decoder's Padding Mask
+    dec_padding_mask = Lambda(create_padding_mask, output_shape=(1, 1, None), name="dec_padding_mask")(inputs)
+
+    
+    # Encoder's Output enc_outputs. Transfer to Decoder
+    enc_outputs = encoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout)(inputs=[inputs, enc_padding_mask])
+
+    # Decoder's Output dec_outputs. Transfer to Final Layer
+    dec_outputs = decoder(vocab_size=vocab_size, num_layers=num_layers, dff=dff, d_model=d_model, num_heads=num_heads, dropout=dropout)(inputs=[inputs, enc_outputs, look_ahead_mask, dec_padding_mask])
+
+
+    # Final Layer to Predict Next Word
+    outputs = Dense(units=vocab_size, name="outputs")(dec_outputs)
+
+    return keras.Model(inputs=[inputs, dec_inputs], outputs=outputs, name=name)
 
 
 
