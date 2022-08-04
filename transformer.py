@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import keras 
 from keras.layers import Layer, Dense, Dropout, LayerNormalization, Embedding, Lambda
+import os
 
 # Encoding Position Infomation to give a positional information
 class PositionalEncoding(Layer):
@@ -392,6 +393,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
 
 if __name__ == "__main__":
+    os.putenv('TF_GPU_ALLOCATOR', 'cuda_malloc_async')
     # 문장의 길이 50, 임베딩 벡터의 차원 128
     sample_pos_encoding = PositionalEncoding(50, 128)
 
@@ -426,17 +428,19 @@ if __name__ == "__main__":
     print(create_look_ahead_mask(tf.constant([[1, 2, 0, 4, 5]])))
 
 
-    small_transformer = transformer(
-    vocab_size = 9000,
+    big_transformer = transformer(
+    vocab_size = 100000,
     num_layers = 4,
-    dff = 512,
-    d_model = 128,
-    num_heads = 4,
-    dropout = 0.3,
-    name="small_transformer")
+    dff = 1024,
+    d_model = 512,
+    num_heads = 8,
+    dropout = 0.1,
+    name="big_transformer")
 
     tf.keras.utils.plot_model(
-    small_transformer, to_file='small_transformer.png', show_shapes=True)
+    big_transformer, to_file='big_transformer.png', show_shapes=True)
+
+    big_transformer.summary()
 
 
     sample_learning_rate = CustomSchedule(d_model=128)
@@ -444,3 +448,4 @@ if __name__ == "__main__":
     plt.plot(sample_learning_rate(tf.range(200000, dtype=tf.float32)))
     plt.ylabel("Learning Rate")
     plt.xlabel("Train Step")
+    plt.show()
