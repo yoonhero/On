@@ -174,3 +174,6 @@ final_dataset.csv
 small_vocab.subwords
 super_small_vocab.subwords
 tokenizing.subwords
+
+
+training_small/

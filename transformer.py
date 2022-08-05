@@ -354,7 +354,7 @@ def transformer(vocab_size, num_layers, dff, d_model, num_heads, dropout, name="
 
 
 # Using CrossEntropy Function as Loss Function Becuase of multi-class classification problem
-def loss_function(y_true, y_pred, MAX_LENGTH):
+def loss_function(y_true, y_pred, MAX_LENGTH=50):
   y_true = tf.reshape(y_true, shape=(-1, MAX_LENGTH - 1))
 
   loss = tf.keras.losses.SparseCategoricalCrossentropy(
