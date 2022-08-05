@@ -163,16 +163,17 @@ def load_latest_checkpoint(checkpoint_directory: str):
 
 
 # foldername ex) training_small
-def make_checkpoint(foldername:str="training", save_best_only=False):
+def make_checkpoint(filepath:str="training/cp-{epoch:04d}.ckpt", save_best_only=False):
     # Checkpoint
-    checkpoint_filename = "/cp-{epoch:04d}.ckpt"
-    checkpoint_dir = os.path.join(foldername, checkpoint_filename)
+    # checkpoint_filename = "/cp-{epoch:04d}.ckpt"
+    # checkpoint_dir = os.path.join(foldername, checkpoint_filename)
 
     if save_best_only:
-        callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir, verbose=1, save_weights_only=True, save_best_only=True)
+        callback = tf.keras.callbacks.ModelCheckpoint(filepath=filepath, verbose=0, save_weights_only=True, save_best_only=True)
     else:
         # save weights in each five epochs
-        callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir, verbose=1, save_weights_only=True, save_freq=3)
+        callback = tf.keras.callbacks.ModelCheckpoint(filepath=filepath, verbose=0, save_weights_only=True, save_freq=3)
 
     # model.save_weights(checkpoint_path.format(epoch=0))
     return callback
+
