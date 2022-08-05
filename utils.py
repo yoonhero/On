@@ -11,6 +11,15 @@ import torch
 import openpyxl
 import time
 import datetime
+import os
+from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT, MAX_LENGTH
+
+
+def accuracy(y_true, y_pred):
+  # ensure labels have shape (batch_size, MAX_LENGTH - 1)
+  y_true = tf.reshape(y_true, shape=(-1, MAX_LENGTH - 1))
+  return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
+
 
 
 # Predict Module 
@@ -73,9 +82,18 @@ class use_model():
 
 
 # Load Json File
-def load_json(filename: str) -> dict:
-    with open(filename, "r") as f:
+def load_json(filepath: str) -> dict:
+    with open(filepath, "r") as f:
         return json.load(f)
+
+
+def load_csv_and_processing(filepath: str):
+    data = pd.read_csv("./final_dataset.csv")
+    
+    questions = [preprocess_sentence(q) for q in data["Q"]]
+    answers = [preprocess_sentence(a) for a in data["A"]]
+
+    return questions, answers
 
 
 # Get Device Training Environment
@@ -143,4 +161,18 @@ def load_latest_checkpoint(checkpoint_directory: str):
 
     return latest_checkpoint
 
-    
+
+# foldername ex) training_small
+def make_checkpoint(foldername:str="training", save_best_only=False):
+    # Checkpoint
+    checkpoint_filename = "/cp-{epoch:04d}.ckpt"
+    checkpoint_dir = os.path.join(foldername, checkpoint_filename)
+
+    if save_best_only:
+        callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir, verbose=1, save_weights_only=True, save_best_only=True)
+    else:
+        # save weights in each five epochs
+        callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir, verbose=1, save_weights_only=True, save_freq=3)
+
+    # model.save_weights(checkpoint_path.format(epoch=0))
+    return callback

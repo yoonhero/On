@@ -1,3 +1,4 @@
+MAX_LENGTH = 50
 # Hyper-parameters
 NUM_LAYERS = 2
 D_MODEL = 256

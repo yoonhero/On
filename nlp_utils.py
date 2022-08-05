@@ -51,7 +51,11 @@ class TextTokenizing():
     def save_tokenizer(self, filename:str):
         self.tokenizer.save_to_file(filename)
 
-    def tokenize_and_filter(self):
+    def tokenize_and_filter(self, inputs:list[str]=None, outputs:list[str]=None):
+        if inputs != None and outputs != None:
+            self.inputs = inputs
+            self.outputs = outputs
+
         tokenized_inputs, tokenized_outputs = [], []
 
         for (input, output) in zip(self.inputs, self.outputs):
@@ -69,5 +73,30 @@ class TextTokenizing():
 
         return tokenized_inputs, tokenized_outputs
 
+    # 텐서플로우 dataset을 이용하여 셔플(shuffle)을 수행하되, 배치 크기로 데이터를 묶는다.
+    # 또한 이 과정에서 교사 강요(teacher forcing)을 사용하기 위해서 디코더의 입력과 실제값 시퀀스를 구성한다.
+    def make_dataset(self, batch_size, buffer_size):
+        # Decoder real sequence has to remove <SOS> toke
+        dataset = tf.data.Dataset.from_tensor_slices((
+            {
+                'inputs': self.questions,
+                'dec_inputs': self.answers[:, :-1], # decoder input. Last Padding Token removed
+            },
+            {
+                'outputs': self.answers[:, 1:] # First Token removed. <sos> token gone
+            }
+        ))
+
+        dataset = dataset.cache()
+        dataset = dataset.shuffle(buffer_size)
+        dataset = dataset.batch(batch_size)
+        dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+
+        return dataset
+        
+
     def tokens(self):
         return self.VOCAB_SIZE, self.START_TOKEN, self.END_TOKEN 
+
+
+
