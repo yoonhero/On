@@ -135,3 +135,12 @@ if __name__ == '__main__':
         return sum(range(n))
 
     calculate_sum_n_cls(200000)
+
+
+
+def load_latest_checkpoint(checkpoint_directory: str):
+    latest_checkpoint = tf.train.latest_checkpoint(checkpoint_directory)
+
+    return latest_checkpoint
+
+    

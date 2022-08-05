@@ -15,9 +15,8 @@ def preprocess_sentence( sentence):
 
 
 class TextTokenizing():
-    def __init__(self, inputs:list[str], outputs:list[str], MAX_LENGTH:int=50):
-        self.inputs = inputs
-        self.outputs = outputs
+    def __init__(self, MAX_LENGTH:int=50):
+        self.inputs, self.outputs = None, None
 
         self.tokenizer = None
 
@@ -33,9 +32,12 @@ class TextTokenizing():
         self.VOCAB_SIZE =self.tokenizer.vocab_size + 2 
 
 
-    def create_tokenizer(self, target_vocab_size:int=2**13):
+    def create_tokenizer(self, inputs:list[str], outputs:list[str], target_vocab_size:int=2**13):
+        self.inputs = inputs
+        self.outputs = outputs
+
         self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
-            self.inputs+self.outputs, target_vocab_size=target_vocab_size
+            inputs+outputs, target_vocab_size=target_vocab_size
         )
         self._init_parameters()
 
@@ -43,6 +45,8 @@ class TextTokenizing():
         self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(filename)
 
         self._init_parameters()
+
+        return self.tokenizer
     
     def save_tokenizer(self, filename:str):
         self.tokenizer.save_to_file(filename)
@@ -64,3 +68,6 @@ class TextTokenizing():
 
 
         return tokenized_inputs, tokenized_outputs
+
+    def tokens(self):
+        return self.VOCAB_SIZE, self.START_TOKEN, self.END_TOKEN 
