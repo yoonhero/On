@@ -15,20 +15,37 @@ def preprocess_sentence( sentence):
 
 
 class TextTokenizing():
-    def __init__(self, inputs, outputs, MAX_LENGTH=50):
+    def __init__(self, inputs:list[str], outputs:list[str], MAX_LENGTH:int=50):
         self.inputs = inputs
         self.outputs = outputs
 
-        # 단어 집합을 생성
-        self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
-            inputs+outputs, target_vocab_size=2**13
-        )
+        self.tokenizer = None
 
-        self.START_TOKEN = [self.tokenizer.vocab_size]
-        self.END_TOKEN = [self.tokenizer.vocab_size+1]
-        self.VOCAB_SIZE = self.tokenizer.vocab_size + 2
+        self.START_TOKEN = None
+        self.END_TOKEN = None
+        self.VOCAB_SIZE = None
         
         self.MAX_LENGTH = MAX_LENGTH
+
+    def _init_parameters(self):
+        self.START_TOKEN = [self.tokenizer.vocab_size]
+        self.END_TOKEN = [self.tokenizer.vocab_size + 1]
+        self.VOCAB_SIZE =self.tokenizer.vocab_size + 2 
+
+
+    def create_tokenizer(self, target_vocab_size:int=2**13):
+        self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
+            self.inputs+self.outputs, target_vocab_size=target_vocab_size
+        )
+        self._init_parameters()
+
+    def load_tokenizer(self, filename:str):
+        self.tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(filename)
+
+        self._init_parameters()
+    
+    def save_tokenizer(self, filename:str):
+        self.tokenizer.save_to_file(filename)
 
     def tokenize_and_filter(self):
         tokenized_inputs, tokenized_outputs = [], []
@@ -47,6 +64,3 @@ class TextTokenizing():
 
 
         return tokenized_inputs, tokenized_outputs
-
-    def call(self):
-        return self.tokenizer, self.START_TOKEN, self.END_TOKEN
