@@ -13,8 +13,10 @@ import time
 import datetime
 
 
-class predict():
-    def __init__(self, model, tokenizer, START_TOKEN, END_TOKEN, MAX_LENGTH):
+# Predict Module 
+# use it like this Predict("안녕") 
+class use_model():
+    def __init__(self, model, tokenizer, START_TOKEN:list[int], END_TOKEN:list[int], MAX_LENGTH:int):
         self.model = model
         
         self.tokenizer = tokenizer
@@ -24,7 +26,7 @@ class predict():
         self.MAX_LENGTH = MAX_LENGTH
 
 
-    def evaluate(self, sentence):
+    def _evaluate(self, sentence:str):
         # 입력 문장에 대한 전처리
         sentence = preprocess_sentence(sentence)
 
@@ -53,11 +55,13 @@ class predict():
         # 단어 예측이 모두 끝났다면 output을 리턴.
         return tf.squeeze(output, axis=0)
 
-    def __call__(self, sentence):
-        if sentence == None:
+    def predict(self, sentence:str=None):
+        if sentence == None or len(sentence) == 0:
             return 
 
-        prediction = self.evaluate(sentence)
+        print(sentence)
+
+        prediction = self._evaluate(sentence)
 
         # prediction == 디코더가 리턴한 챗봇의 대답에 해당하는 정수 시퀀스
         # tokenizer.decode()를 통해 정수 시퀀스를 문자열로 디코딩.
