@@ -10,11 +10,11 @@ from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT
 # CSV Structure Example
 # Q                |                 A 
 # 뭐해?            |               코딩!       
-questions, answers = load_csv_and_processing("./small_dataset.csv")
+questions, answers = load_csv_and_processing("./super_small_4_dataset.csv")
 
 
-questions = questions[20000:-5000]
-answers = answers[20000:-5000]
+# questions = questions[20000:-5000]
+# answers = answers[20000:-5000]
 
 
 # 토크나이저 모듈 
@@ -27,7 +27,7 @@ textTokenizing = TextTokenizing()
 # textTokenizing.save_tokenizer("super_super_3_small_vocab")
 
 # 토크나이저를 로딩
-textTokenizing.load_tokenizer("super_super_3_small_vocab")
+textTokenizing.load_tokenizer("super_ultra_small_vocab")
 
 
 # 보캡 사이즈, 스타트 토큰, 엔드 토큰을 불러온다.
@@ -44,7 +44,7 @@ print(f'답변 데이터의 크기:{answers.shape}')
 
 
 # 배치 크기와 버퍼 사이즈를 선언
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 BUFFER_SIZE = 20000
 
 # 훈련을 위한 데이터셋을 생성한다.
@@ -66,7 +66,7 @@ model.summary()
 
 
 # 콜백 함수를 만들어서 웨이트 값이 훈련하면서 저장되도록 한다.
-cp_callback = make_checkpoint("training_super_small_3/cp-{epoch:04d}.ckpt")
+cp_callback = make_checkpoint("training_super_ultra_small/cp-{epoch:04d}.ckpt")
 
 # 학습률 계산을 위한 클래스를 불러온다.
 learning_rate = CustomSchedule(D_MODEL)
@@ -80,5 +80,5 @@ model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
 
 
 # 총 20번 훈련한다.
-EPOCHS = 60
+EPOCHS = 20
 model.fit(dataset, epochs=EPOCHS, callbacks=[cp_callback])
