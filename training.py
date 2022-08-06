@@ -14,18 +14,18 @@ import os
 
 questions, answers = load_csv_and_processing("./small_dataset.csv")
 
-questions = questions[15000:]
-answers = answers[15000:]
+questions = questions[25000:]
+answers = answers[25000:]
 
 
 textTokenizing = TextTokenizing()
-# tokenizer = textTokenizing.create_tokenizer(questions, answers, target_vocab_size=2**15)
-# textTokenizing.save_tokenizer("super_super_small_vocab")
+tokenizer = textTokenizing.create_tokenizer(questions, answers, target_vocab_size=2**15)
+textTokenizing.save_tokenizer("super_super_small_vocab")
 textTokenizing.load_tokenizer("super_super_small_vocab")
 
 VOCAB_SIZE, START_TOKEN, END_TOKEN = textTokenizing.tokens()
 
-VOCAB_SIZE, START_TOKEN, END_TOKEN
+print(VOCAB_SIZE, START_TOKEN, END_TOKEN)
 
 
 questions, answers = textTokenizing.tokenize_and_filter(questions, answers)
@@ -66,5 +66,5 @@ optimizer = tf.keras.optimizers.Adam(
 model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
 
 
-EPOCHS = 40
+EPOCHS = 20
 model.fit(dataset, epochs=EPOCHS, callbacks=[cp_callback])
