@@ -1,12 +1,7 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import re
 import tensorflow as tf
-import tensorflow_datasets as tfds
 from keras.preprocessing.sequence import pad_sequences
 from nlp_utils import preprocess_sentence, TextTokenizing
-from transformer.tensorflow import transformer, CustomSchedule, loss_function
+from transformer import transformer, CustomSchedule, loss_function
 from utils import make_checkpoint, accuracy, load_csv_and_processing
 from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT
 

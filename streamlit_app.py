@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_chat import message
 from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT
 from utils import use_model, load_latest_checkpoint
-from transformer.tensorflow import transformer
+from transformer import transformer
 from nlp_utils import TextTokenizing
 
 
