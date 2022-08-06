@@ -1,7 +1,5 @@
 import streamlit as st
 from streamlit_chat import message
-import pandas as pd
-import numpy as np
 from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT
 from utils import use_model, load_latest_checkpoint
 from transformer import transformer
