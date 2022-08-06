@@ -83,12 +83,12 @@ class use_model():
 
 # Load Json File
 def load_json(filepath: str) -> dict:
-    with open(filepath, "r") as f:
+    with open(filepath, "r", encoding="utf-8-sig") as f:
         return json.load(f)
 
 
 def load_csv_and_processing(filepath: str):
-    data = pd.read_csv("./final_dataset.csv")
+    data = pd.read_csv(filepath)
     
     questions = [preprocess_sentence(q) for q in data["Q"]]
     answers = [preprocess_sentence(a) for a in data["A"]]

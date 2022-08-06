@@ -12,14 +12,13 @@ from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT, MAX_LE
 import os
 
 
-questions, answers = load_csv_and_processing("./final_dataset.csv")
-
-questions = questions[:50000]
-answers = answers[:50000]
+questions, answers = load_csv_and_processing("./small_dataset.csv")
 
 
 textTokenizing = TextTokenizing()
-tokenizer = textTokenizing.load_tokenizer("super_small_vocab")
+#tokenizer = textTokenizing.create_tokenizer(questions, answers, target_vocab_size=2**15)
+#textTokenizing.save_tokenizer("super_super_small_vocab")
+textTokenizing.load_tokenizer("super_super_small_vocab")
 
 VOCAB_SIZE, START_TOKEN, END_TOKEN = textTokenizing.tokens()
 
@@ -33,7 +32,7 @@ print(f'답변 데이터의 크기:{answers.shape}')
 
 
 
-BATCH_SIZE = 30
+BATCH_SIZE = 64
 BUFFER_SIZE = 20000
 
 dataset = textTokenizing.make_dataset(BATCH_SIZE, BUFFER_SIZE)
@@ -52,7 +51,7 @@ model.summary()
 
 
 
-cp_callback = make_checkpoint("training_small/cp-{epoch:04d}.ckpt")
+cp_callback = make_checkpoint("training_super_small/cp-{epoch:04d}.ckpt")
 
 
 learning_rate = CustomSchedule(D_MODEL)
@@ -64,5 +63,5 @@ optimizer = tf.keras.optimizers.Adam(
 model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
 
 
-EPOCHS = 20
+EPOCHS = 40
 model.fit(dataset, epochs=EPOCHS, callbacks=[cp_callback])

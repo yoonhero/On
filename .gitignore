@@ -177,3 +177,18 @@ tokenizing.subwords
 
 
 training_small/
+
+
+training_super_small/
+
+
+small_dataset.csv
+
+super_super_small_vocab.subwords
+
+
+*.subwords
+training_small.data-00000-of-00001
+training_super_small.data-00000-of-00001
+
+
