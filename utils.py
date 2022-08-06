@@ -1,7 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt 
-import tensorflow_datasets as tfds
 import tensorflow as tf
 from nlp_utils import preprocess_sentence
 import json
@@ -9,7 +6,8 @@ import torch
 import openpyxl
 import time
 import datetime
-from hyperparameters import NUM_LAYERS, D_MODEL, NUM_HEADS, DFF, DROPOUT, MAX_LENGTH
+from hyperparameters import MAX_LENGTH
+
 
 
 def accuracy(y_true, y_pred):
@@ -20,7 +18,7 @@ def accuracy(y_true, y_pred):
 
 
 # Predict Module 
-# use it like this Predict("안녕") 
+# use it like this use_model.predict("안녕")
 class use_model():
     def __init__(self, model, tokenizer, START_TOKEN:list[int], END_TOKEN:list[int], MAX_LENGTH:int):
         self.model = model
@@ -84,6 +82,7 @@ def load_json(filepath: str) -> dict:
         return json.load(f)
 
 
+# Load CSV File 
 def load_csv_and_processing(filepath: str):
     data = pd.read_csv(filepath)
     
