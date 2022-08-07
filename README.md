@@ -1,9 +1,75 @@
 # 온 On
 ## _Being Human, First Step_
 
-'온'은 순 우리말로 '전부의'라는 뜻을 가진 이름으로 제가 개발한 첫번째 인공지능 오픈 도메인 챗봇입니다.
+'온'은 순 우리말로 '전부의'라는 뜻을 가진 이름으로 제가 개발한 첫번째 인공지능 오픈 도메인 챗봇이다.
 
-오픈 도메인 챗봇이란 목적 지향형 챗봇과 다르게 사용자와의 <strong>자유로운 대화를 목적</strong>으로 하는 챗봇입니다. 대표적인 서비스로 이루다나 심심이가 있습니다. 사용자의 특정 문제를 해결하기 위한 것이 아닌 사용자와 정서적 유대감을 쌓을 수 있고 서로 드립도 주고 받을 수 있는 정말 인격을 가진 것 같은 인공지능이라고 할 수 있습니다. 강인공지능으로 가기 위한 첫번째 과정이라고 할 수 있습니다.
+오픈 도메인 챗봇이란 목적 지향형 챗봇과 다르게 사용자와의 <strong>자유로운 대화를 목적</strong>으로 하는 챗봇이다. 대표적인 서비스로 이루다나 심심이가 있다. 사용자의 특정 문제를 해결하기 위한 것이 아닌 사용자와 정서적 유대감을 쌓을 수 있고 서로 드립도 주고 받을 수 있는 정말 인격을 가진 것 같은 인공지능이라고 할 수 있다. 강인공지능으로 가기 위한 첫번째 과정이라고 할 수 있다.
+
+## Installation
+
+
+```bash
+git clone https://github.com/yoonhero/On
+```
+
+깃허브 레포지토리를 클론한다.
+
+```bash
+conda env create -f requirements.yml 
+```
+
+Anaconda를 사용해서 패키지들을 설치한다.
+
+## Getting Started
+
+크게 데이터 전처리 -> 훈련 -> 모델 사용 단계로 나눌 수 있다.
+
+이 중 훈련과 모델 단계를 모듈화해두었으니 데이터 전처리를 한 다음에 사용하기를 바란다.
+
+데이터 전처리는 질문과 대답으로 이루어진 csv파일을 Q, A  열로 만들면 된다.
+
+### Training
+
+```bash
+python training.py \
+        --verbose=False \
+        --dataset=dataset.csv \
+        --tokenizer=tokenizer \
+        --create-tokenizer=False \
+        --target-vocab-size=2**15 \
+        --checkpoint=training/cp-{epoch:04d}.ckpt \
+        --batch-size=64 \
+        --save-best-only=False \
+        --epochs=20 \
+```
+
+인자들에 대한 더 자세한 설명이 필요하다면
+
+```bash
+python training.py -h
+```
+
+를 실행하기를 바란다.
+
+
+### Use Model
+
+```bash
+python main.py \
+        --tokenizer=tokenizer \
+        --checkpoint=training \
+```
+
+인자들에 대한 더 자세한 설명이 필요하다면
+
+```bash
+python main.py -h
+```
+
+를 실행하기를 바란다.
+
+
+
 
 ## 알고리즘
 
@@ -89,6 +155,14 @@
 ![](https://github.com/yoonhero/On/blob/master/images/answer1.JPG?raw=true)
 
 ![](https://github.com/yoonhero/On/blob/master/images/answer2.JPG?raw=true)
+
+
+## Contribute
+
+자유롭게 Pull Request 보내주시면 코드 검토하고 허락해드리겠습니다.
+
+기타 문의사항이나 모델에 관한 질문은 yoonhero06@naver.com 으로 해드리면 답해드리겠습니다.
+
 
 ## License
 

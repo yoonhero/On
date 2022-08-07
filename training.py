@@ -95,7 +95,7 @@ def main():
     argparser = argparse.ArgumentParser(description="Human Like Chatbot Training")
 
     argparser.add_argument(
-        '-v', '--verbose', action="store_true", dest="debug", help="Print debug information"
+        '-v', '--verbose', type=bool, default=False, dest="debug", help="Print debug information"
         )
 
     argparser.add_argument(
