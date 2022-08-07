@@ -95,7 +95,7 @@ def main():
     argparser = argparse.ArgumentParser(description="Human Like Chatbot Training")
 
     argparser.add_argument(
-        '-v', '--verbose',dest="debug", action="store_true", dest="debug", help="Print debug information"
+        '-v', '--verbose', action="store_true", dest="debug", help="Print debug information"
         )
 
     argparser.add_argument(
@@ -113,15 +113,15 @@ def main():
     argparser.add_argument(
         '--craete-tokenizer',
         dest="create_tokenizer",
-        action="store_false",
-        type="bool",
+        default=False,
+        type=bool,
         help="Create Tokenized Words File"
     )
 
     argparser.add_argument(
         '--target-vocab-size',
         dest="target_vocab_size",
-        type="int",
+        type=int,
         default=2**15,
         help="Set a Vocab Size"
     )
@@ -135,7 +135,7 @@ def main():
     argparser.add_argument(
         '--batch-size',
         dest="batch",
-        type="int",
+        type=int,
         default=64,
         help="Set Batch Size"
     )
@@ -143,16 +143,16 @@ def main():
 
     argparser.add_argument(
         '--save-best-only',
-        type="bool",
-        action="store_false"
+        type=bool,
+        default=False,
         dest="save_best_only",
         help="Save The Best Model or not"
     )
 
     argparser.add_argument(
         '--epochs', 
-        type="int"
-        default="20"
+        type=int,
+        default=20,
         help="Set Epoch of Training Process"
     )
 

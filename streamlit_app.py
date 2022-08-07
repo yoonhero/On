@@ -12,7 +12,7 @@ from nlp_utils import TextTokenizing
 def get_tokenizer():
  
     textTokenizing = TextTokenizing()
-    tokenizer = textTokenizing.load_tokenizer("super_ultra_small_vocab")
+    tokenizer = textTokenizing.load_tokenizer("tokenizer")
 
     VOCAB_SIZE, START_TOKEN, END_TOKEN = textTokenizing.tokens()
 
@@ -23,7 +23,7 @@ def get_tokenizer():
 @st.cache(allow_output_mutation=True)
 def cached_model(VOCAB_SIZE):
     # 자신이 훈련시킨 체크포인트 디렉토리
-    checkpoint_path = './training_super_ultra_small'
+    checkpoint_path = './training'
     latest_checkpoint = load_latest_checkpoint(checkpoint_path)
 
     model = transformer(
