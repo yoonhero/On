@@ -7,7 +7,7 @@
 
 ## 알고리즘
 
-![](.github/images/transform_structure.png)
+![](https://github.com/yoonhero/On/blob/master/images/transform_structure.png?raw=true)
 
 딥러닝 학습에 사용한 알고리즘은 Transformer를 사용하였습니다. 2017년 구글이 발표한 논문인 "Attention is all you need"에서 나온 모델로 기존의 RNN기반의 seq2seq 구조 인코더-디코더 구조를 따르면서도 RNN의 단점을 상쇄시키기 위해서 Attention만으로 구현한 모델입니다. 
 
@@ -25,7 +25,7 @@
 | DFF | 512 |
 | DROPOUT | 0.1 |
 
-![](.github/images/study_transformer.png)
+![](https://github.com/yoonhero/On/blob/master/images/study_transformer.jpg?raw=true)
 
 
 ## 성능
@@ -34,11 +34,11 @@
 
 * small 모델: Total params: 44,745,447
 
-![](.github/images/small.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/small.jpg?raw=true)
 
 * big 모델: Total params: 185,243,296
 
-![](.github/images/big.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/big.jpg?raw=true)
 
 ## 데이터
 
@@ -46,13 +46,11 @@
 
 데이터는 크게 국립 국어원과 Ai Hub에서 제공받아서 훈련하였다.
 
-![](.github/images/getdata.jpg)
-
-만약 이 모델을 사용하고 싶으면 제작된 모듈을 활용해서 훈련하길 바란다.
+만약 이 모델을 사용하고 싶으면 제작된 모듈을 활용해서 훈련하길 바란다. 이용 가이드 참고
 
 * 데이터셋 구조
   
-![](.github/images/dataset_structure.png)
+![](https://github.com/yoonhero/On/blob/master/images/dataset_structure.png?raw=true)
 
 
 ## 결과
@@ -64,16 +62,13 @@
 | 간단하게 만들 수 있다. | 대답이 데이터 질과 양에 의존한다. |
 
 
-![](.github/images/beta01.jpg)
-
-
 ### BETA0.0002 - [목적지향형 챗봇 클론](https://github.com/yoonhero/On/blob/master/practices/train.py)
 
 | 장점 | 단점 |
 | --- | --- |
 | 간단하게 만들 수 있다. | 대답이 데이터 질과 양에 의존한다. |
 
-![](.github/images/beta02.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/beta02.jpg?raw=true)
 
 
 ### BETA0.1 - [감정 분류 CNN 구현](https://github.com/yoonhero/On/blob/master/practices/cnn_sentiment.py)
@@ -82,8 +77,6 @@
 | --- | --- |
 | 간단하게 만들 수 있다. | 감정만 알 수 있다. |
 
-![](.github/images/beta05.jpg)
-
 
 ### BETA1.0 - [트랜스포머 구조를 적용한 오픈 도메인 챗봇](https://github.com/yoonhero/On/blob/master/training.py)
 
@@ -91,11 +84,11 @@
 | --- | --- |
 | 다양한 대답을 할 수 있다. | 왜 이걸 이렇게 대답했는지 모르겠는 경우가 다반사이다.. |
 
-![](.github/images/isanghe.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/isanghe.jpg?raw=true)
 
-![](.github/images/answer1.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/answer1.JPG?raw=true)
 
-![](.github/images/answer2.jpg)
+![](https://github.com/yoonhero/On/blob/master/images/answer2.JPG?raw=true)
 
 ## License
 
