@@ -1,6 +1,11 @@
 # 온 On
 ## _Being Human, First Step_
 
+<a href="https://www.buymeacoffee.com/yoonhero06"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=yoonhero06&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
+
+[![wakatime](https://wakatime.com/badge/user/5f9867f2-894f-4b38-acf8-ebc89cb7f4e6/project/ee1de52b-91f2-4e26-8488-b98e71fa6379.svg)](https://wakatime.com/badge/user/5f9867f2-894f-4b38-acf8-ebc89cb7f4e6/project/ee1de52b-91f2-4e26-8488-b98e71fa6379)
+[![wakatime](https://wakatime.com/badge/user/5f9867f2-894f-4b38-acf8-ebc89cb7f4e6/project/762298ee-78f8-4f11-876e-628aea912d0f.svg)](https://wakatime.com/badge/user/5f9867f2-894f-4b38-acf8-ebc89cb7f4e6/project/762298ee-78f8-4f11-876e-628aea912d0f)
+
 '온'은 순 우리말로 '전부의'라는 뜻을 가진 이름으로 제가 개발한 첫번째 인공지능 오픈 도메인 챗봇이다.
 
 오픈 도메인 챗봇이란 목적 지향형 챗봇과 다르게 사용자와의 <strong>자유로운 대화를 목적</strong>으로 하는 챗봇이다. 대표적인 서비스로 이루다나 심심이가 있다. 사용자의 특정 문제를 해결하기 위한 것이 아닌 사용자와 정서적 유대감을 쌓을 수 있고 서로 드립도 주고 받을 수 있는 정말 인격을 가진 것 같은 인공지능이라고 할 수 있다. 강인공지능으로 가기 위한 첫번째 과정이라고 할 수 있다.
